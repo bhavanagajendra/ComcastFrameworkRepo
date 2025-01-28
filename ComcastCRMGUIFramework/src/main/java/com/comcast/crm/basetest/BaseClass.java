@@ -16,10 +16,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.aventstack.extentreports.reporter.configuration.Theme;
 import com.comcasr.crm.generic.databaseutility.DataBaseUtility;
 import com.comcast.crm.generic.fileutility.ExcelUtility;
 import com.comcast.crm.generic.fileutility.FileUtility;
@@ -47,13 +43,23 @@ public class BaseClass {
 		dbLib.getDbConnection();
 	}
 	
-	@Parameters("BROWSER")
+	//@Parameters("BROWSER")
 	@BeforeClass(groups = {"smokeTest" , "regressionTest"})
-	public void configBC(String browser) throws Throwable { 
+	//public void configBC(String browser) throws Throwable { //This is the syntax when we use @Parameters
+	public void configBC() throws Throwable { 
 		System.out.println("==Launch the Browser==");
+		//Getting from the properties file
 		//String BROWSER = fLib.getDataFromPropertiesFile("browser");
-		String BROWSER = browser;
 		
+		//Getting the value from testng file using @Parameters
+		//String BROWSER = browser;
+		
+		//Getting value from the command line
+		//String BROWSER = System.getProperty("browser");
+		
+		//Getting value from the command line
+		String BROWSER = System.getProperty("browser",fLib.getDataFromPropertiesFile("browser"));
+				
 		if(BROWSER.equals("chrome")) {
 			driver = new ChromeDriver();
 		}else if (BROWSER.equals("firefox")) {
@@ -69,9 +75,14 @@ public class BaseClass {
 	@BeforeMethod(groups = {"smokeTest" , "regressionTest"})
 	public void configBM() throws Throwable { 
 		System.out.println("=Login=");
-		String URL = fLib.getDataFromPropertiesFile("url");
-		String USERNAME = fLib.getDataFromPropertiesFile("username");
-		String PASSWORD = fLib.getDataFromPropertiesFile("password");
+		//String URL = fLib.getDataFromPropertiesFile("url");
+		//String USERNAME = fLib.getDataFromPropertiesFile("username");
+		//String PASSWORD = fLib.getDataFromPropertiesFile("password");
+		
+		String URL = System.getProperty("url", fLib.getDataFromPropertiesFile("url"));
+		String USERNAME = System.getProperty("username", fLib.getDataFromPropertiesFile("username"));
+		String PASSWORD = System.getProperty("password", fLib.getDataFromPropertiesFile("password"));
+		
 		LoginPage lp = new LoginPage(driver);
 		lp.loginToApp(URL, USERNAME, PASSWORD);
 	}
